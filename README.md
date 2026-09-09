@@ -79,7 +79,7 @@ After deploying with these variables, every new quote request will send a profes
 2. Find:
 
 ```js
-const API_URL = ''; // <-- PASTE YOUR BACKEND URL HERE
+const API_URL = ''; // <-- https://cartel-backend-9z40.onrender.com
 ```
 
 3. Change to:
