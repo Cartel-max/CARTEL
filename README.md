@@ -1,122 +1,151 @@
-# CARTEL MULTI-ENGINEERING LTD — Corporate Website
+# CARTEL MULTI-ENGINEERING LTD – Quote Request Backend
 
-Professional multi-page website for **CARTEL MULTI-ENGINEERING LTD**, an electrical installation and engineering company based in Rwanda.
+Receive quote requests from the website, store them, **get email notifications**, and manage them in a simple admin panel.
 
-## Website Pages
+## Features
 
-| Page | File | Description |
-|------|------|-------------|
-| Home | `index.html` | Hero, services overview, why choose us, featured projects, CTAs |
-| About | `about.html` | Company overview, mission, vision, values, approach |
-| Services | `services.html` | Full list of electrical installation & engineering services |
-| Projects | `projects.html` | Portfolio with category filters (sample/placeholder projects) |
-| Safety & Quality | `safety.html` | Safety standards, quality control, PPE, testing |
-| Why Choose Us | `why-us.html` | Reasons to work with the company |
-| FAQ | `faq.html` | Accordion FAQ covering common client questions |
-| Contact | `contact.html` | Contact details, quote form, social links, map placeholder |
+- Receives form submissions (`POST /api/quote`)
+- Saves every request in `data/quotes.json`
+- **Sends you an email** for every new quote request
+- Password-protected Admin panel (`/admin`) to view, filter and update status
+- Rate limiting + CORS protection
 
-## Tech Stack
-
-- HTML5 (semantic, accessible)
-- CSS3 (custom properties, Flexbox, Grid, responsive)
-- Vanilla JavaScript (mobile menu, FAQ accordion, project filter, form validation, scroll effects)
-- Google Fonts (Inter)
-- Font Awesome 6 (icons)
-- Unsplash images (placeholders — replace with your own)
-
-No backend, no build step, no Node.js required. Ready for **GitHub Pages**.
-
-## Folder Structure
+## Folder structure
 
 ```
-cartel-multi-engineering/
-├── index.html
-├── about.html
-├── services.html
-├── projects.html
-├── safety.html
-├── why-us.html
-├── faq.html
-├── contact.html
-├── css/
-│   └── style.css
-├── js/
-│   └── script.js
-├── images/
-│   └── logo.jpg          ← Official company logo
+cartel-backend/
+├── server.js
+├── package.json
+├── public/
+│   └── admin.html
+├── data/
+│   └── quotes.json
 └── README.md
 ```
 
-## How to Deploy on GitHub Pages
+## 1. Deploy the backend (free)
 
-### 1. Create a new GitHub repository
-1. Go to [github.com/new](https://github.com/new)
-2. Repository name suggestion: `cartel-multi-engineering`
-3. Keep it **Public**
-4. Do **not** initialize with README (we already have one)
-5. Click **Create repository**
+### Render.com (recommended)
 
-### 2. Upload the files
-**Option A — GitHub web interface**
-1. On the new repository page click **uploading an existing file**
-2. Drag the entire contents of the `cartel-multi-engineering` folder (all HTML files, `css/`, `js/`, `images/`, `README.md`)
-3. Commit the files
+1. Create account at [render.com](https://render.com)
+2. **New → Web Service**
+3. Upload this folder or connect a GitHub repo
+4. Settings:
+   - Runtime: **Node**
+   - Build Command: `npm install`
+   - Start Command: `npm start`
+5. Add these **Environment Variables**:
 
-**Option B — Git command line**
-```bash
-cd cartel-multi-engineering
-git init
-git add .
-git commit -m "Initial commit — CARTEL MULTI-ENGINEERING LTD website"
-git branch -M main
-git remote add origin https://github.com/YOUR-USERNAME/cartel-multi-engineering.git
-git push -u origin main
-```
+| Variable | Value | Required |
+|----------|-------|----------|
+| `ADMIN_PASSWORD` | Strong password for admin login | Yes |
+| `ADMIN_TOKEN_SECRET` | Any long random string | Yes |
+| `NOTIFY_EMAIL` | `roi.nipatrick@gmail.com` | Yes |
+| `SMTP_USER` | Your Gmail address | Yes (for email) |
+| `SMTP_PASS` | Gmail **App Password** | Yes (for email) |
+| `SMTP_HOST` | `smtp.gmail.com` | Optional |
+| `SMTP_PORT` | `587` | Optional |
+| `SMTP_FROM` | Same as SMTP_USER | Optional |
 
-### 3. Enable GitHub Pages
-1. Go to the repository **Settings** → **Pages**
-2. Under **Source** select **Deploy from a branch**
-3. Branch: `main` / folder: `/ (root)`
-4. Click **Save**
-5. After a minute or two your site will be live at:
-   `https://YOUR-USERNAME.github.io/cartel-multi-engineering/`
-
-### 4. Add / replace images
-- Official logo is already at `logo.jpg`
-- Replace Unsplash placeholder images with your own photographs of real work
-- Keep the same file names or update the `src` attributes in the HTML files
-- Recommended sizes: 1200–1600 px wide for hero/project images, compressed for web
-
-### 5. Connect the contact form (optional)
-The contact form currently validates on the client only. To receive messages:
-
-- **Formspree**: create a form at formspree.io, then set the form `action` to your Formspree endpoint and method `POST`
-- **Netlify Forms**: add `netlify` attribute to the form and deploy on Netlify
-- Or wire it to your own backend / email service
-
-### 6. Updating the website later
-1. Edit the HTML/CSS/JS files locally
-2. Commit and push to the `main` branch
-3. GitHub Pages will automatically rebuild
-
-## Company Information (already filled in)
-
-- **Company**: CARTEL MULTI-ENGINEERING LTD
-- **Phone**: +250 788 725 620
-- **Email**: roi.nipatrick@gmail.com
-- **Location**: Rwanda
-- **LinkedIn**: https://www.linkedin.com/in/carterpatrique
-- **Linktree**: https://linktr.ee/Cartel_patrique
-- **Facebook**: https://www.facebook.com/cartel.patrique
-- **X**: https://x.com/Cartel_Patrique
-
-## Notes
-
-- All project cards on the Projects page are clearly marked as **sample / placeholder** content so you can replace them with real completed projects.
-- No fake awards, certifications, statistics or client reviews are claimed.
-- The design uses a professional navy / accent-blue engineering theme that complements the official logo.
-- Fully responsive (desktop, tablet, mobile) with accessible keyboard navigation and reduced-motion support.
+6. Deploy. You get a URL like:  
+   `https://cartel-quotes.onrender.com`
 
 ---
 
-© 2026 CARTEL MULTI-ENGINEERING LTD. All Rights Reserved.
+## 2. Enable Gmail email notifications (important)
+
+Gmail does **not** allow normal passwords for apps. You must create an **App Password**:
+
+1. Go to your Google Account → **Security**
+2. Enable **2-Step Verification** (if not already on)
+3. Search for **App passwords**
+4. Create a new App Password:
+   - App: Mail
+   - Device: Other → type “CARTEL Backend”
+5. Copy the 16-character password (e.g. `abcd efgh ijkl mnop`)
+6. Put it in the environment variable `SMTP_PASS` (no spaces)
+
+Also set:
+- `SMTP_USER` = `roi.nipatrick@gmail.com`
+- `NOTIFY_EMAIL` = `roi.nipatrick@gmail.com` (where you want to receive the alerts)
+
+After deploying with these variables, every new quote request will send a professional email to your inbox.
+
+---
+
+## 3. Connect the website form
+
+1. Open `script.js` on the website
+2. Find:
+
+```js
+const API_URL = ''; // <-- PASTE YOUR BACKEND URL HERE
+```
+
+3. Change to:
+
+```js
+const API_URL = 'https://YOUR-BACKEND-URL.onrender.com/api/quote';
+```
+
+4. Re-upload the website files to GitHub Pages.
+
+---
+
+## 4. Use the Admin panel
+
+Open:  
+`https://YOUR-BACKEND-URL.onrender.com/admin`
+
+Login with the `ADMIN_PASSWORD` you set.
+
+You can:
+- See all quote requests
+- Filter by status (New / Contacted / Quoted / Closed)
+- Click email or phone to contact the client
+- Change status
+- Delete old requests
+
+---
+
+## Local testing
+
+```bash
+cd cartel-backend
+npm install
+# Optional: create a .env or export the variables
+export SMTP_USER=roi.nipatrick@gmail.com
+export SMTP_PASS=your-16-char-app-password
+export NOTIFY_EMAIL=roi.nipatrick@gmail.com
+export ADMIN_PASSWORD=Cartel2026!
+npm start
+```
+
+Then open http://localhost:3000/admin
+
+---
+
+## Emails sent
+
+**1. To you (company notification)**
+- Client name, email, phone, subject, full message, date
+- Reply-To is set to the client so you can reply directly
+
+**2. To the client (confirmation)**
+- Professional thank-you message
+- Confirms their request was received
+- Mentions typical response time (1–2 business days)
+- Includes your phone number for urgent cases
+
+---
+
+## Security notes
+
+- Change the default admin password
+- Never put your real Gmail password in the code – use App Password only
+- Rate limit is active (10 submissions per 15 minutes per IP)
+- CORS restricted to your GitHub Pages domain
+
+---
+
+© 2026 CARTEL MULTI-ENGINEERING LTD
